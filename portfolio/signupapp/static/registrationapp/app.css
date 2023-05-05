@@ -1,0 +1,87 @@
+/*
+app.css
+Author     : Brian
+*/
+
+textarea {
+    width: 100%;
+    min-height: 100px;
+}
+
+input:focus, textarea:focus {
+    color: goldenrod;
+}
+
+hr {
+    border: 1px solid blue;
+		border-top: solid 10px #e8e2e3;
+}
+
+header nav ul li {
+  display: flex;
+}
+
+header nav ul li {
+  display: inline-block;
+  text-align: center;
+  padding: 0 10px;
+  text-decoration: none;
+  font-size: 1.8rem;
+}
+
+.mnu:hover {
+  background-color: red;
+}
+
+.mnu {
+  background-color: black;
+}
+
+
+.lblt:hover, .lblt2:hover {
+  background-color: red;
+}
+
+.lblt {
+  background-color: green;
+}
+
+.dvregister {
+  border: 10px solid #777;
+  width: auto;
+  padding: 100px;
+  margin-bottom: 50px;
+}
+
+#message {
+  border: 10px solid #777;
+  padding: 100px;
+  margin-bottom: 50px;
+}
+
+#messages {
+  border: 10px solid #777;
+  height: 600px;
+  padding: 100px;
+  overflow: scroll;
+  margin-bottom: 50px;
+}
+
+.navbar {
+    margin-top: 20px;
+    padding: 0;
+    list-style: none;
+}
+
+form > div {
+    position: relative;
+}
+
+form {
+    width: 550px;
+    margin: 2em auto;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-weight: 300;
+    font-size: 22px;
+    border: groove 10px green;
+}

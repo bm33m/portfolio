@@ -1,0 +1,30 @@
+{% extends "baseapp.html" %}
+{% block title %}Portfolio: Login{% endblock %}
+{% block stlcss %}
+  {% load static %}
+  <link rel="stylesheet" href="{% static '/loginapp/app.css' %}">
+{% endblock %}
+{% block content %}
+<h1>Login: {{ pname }}</h1>
+<div>
+  {{ time }}
+</div>
+<hr>
+<b>Login: {{ msg }}</b>
+<div class="dvlogin">
+  <form class="frmlogin" action="signin" method="post">
+    {% csrf_token %}
+  <div class="dvcont">
+    <label>Email:</label><br>
+    <input class="cinpt" type="email" id="email" name="email" placeholder="email" maxlength="30" required />
+  </div>
+  <div class="dvcont">
+      <label>Password:</label><br>
+      <input class="cinpt" type="password" id="pass" name="password" placeholder="password" maxlength="20" required />
+  </div>
+  <p><input type="submit" value="OK"/></p>
+  </form>
+</div>
+<hr>
+{{ year }}
+{% endblock %}

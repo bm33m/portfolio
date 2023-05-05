@@ -1,0 +1,40 @@
+{% extends "webapp.html" %}
+{% block content %}
+  {% load static %}
+  <script src="{% static '/js/location.js' %}"></script>
+<div>
+Work in progress.....
+
+<!--
+Todo:
+
+<div onload="initialize()">
+  <div id="map">
+  </div>
+  <div>
+    <input id="address" type="textbox" value="Sydney, NSW">
+    <input type="button" value="Encode" onclick="codeAddress()">
+  </div>
+</div>
+-->
+
+<div>
+  <b>{{ time }}</b>
+  <b>{{ message }}</b>
+  <b>Results: {{ results }}</b>
+</div>
+<hr>
+
+<hr>
+
+<hr>
+<div class="gdvuiprofile">
+  <img src="{% static app.map %}" alt="{{ app.info }}">
+</div>
+{{ app.map }}
+<div class="dvinfo">
+  {{ app.info }}
+</div>
+<hr>
+</div>
+{% endblock %}

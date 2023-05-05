@@ -1,0 +1,71 @@
+{% extends "baseapp.html" %}
+{% block content %}
+  {% load static %}
+  <script src="{% static '/js/app.js' %}"></script>
+<h1>Portfolio app home.</h1>
+<div>
+  {{ time }}
+  <b>{{ message }}</b>
+</div>
+<hr>
+<b>Users.</b>
+<div>
+<!--
+  <form class="frmreg" action="profileinfo" method="post">
+  {% csrf_token %}
+-->
+  <div>
+    <div id="dvusers">
+    <div class="dvtbl">
+      <table id="tblusers">
+      <tbody>
+        <tr class="header">
+        <th>ID</th>
+        <th>Profile_number</th>
+        <th>Adress</th>
+        <th>Location</th>
+        <th>Latitude</th>
+        <th>Longitude</th>
+        <th>Info</th>
+        <th>Username</th>
+        </tr>
+        {% for x in users %}
+        <tr>
+        <td>{{ x.id }}</td>
+        <td>{{ x.Profile_number }}</td>
+        <td>{{ x.address }}</td>
+        <td>{{ x.location }}</td>
+        <td>{{ x.latitude }}</td>
+        <td>{{ x.longitude }}</td>
+        <td id="{{x.username}}">{{x}}</td>
+        <td><button class="btnSend" type="button" onclick="profileInfo('{{x.username}}')">{{x.username}}</button></td>
+        </tr>
+        <script type="text/javascript">
+          userLocation('{{x.username}},{{x.latitude}},{{x.longitude}}');
+        </script>
+        {% endfor %}
+      </tbody>
+      </table>
+    </div>
+    </div>
+  </div>
+<!--
+    <button type="submit">Info</button>
+  </form>
+-->
+</div>
+<hr>
+<div class="dvlogs">
+  <div class="log" id="log"></div>
+  <div class="logs" id="logs"></div>
+</div>
+<hr>
+<div class="gdvuiprofile">
+  <img src="{% static app.map %}" alt="{{ app.info }}">
+</div>
+{{ app.map }}
+<div class="dvinfo">
+  {{ app.info }}
+</div>
+<hr>
+{% endblock %}

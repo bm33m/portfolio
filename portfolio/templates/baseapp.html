@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% block stlcss %}{% endblock %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static '/css/main.css' %}">
+		<title>{% block title %}Portfolio Pro{% endblock %}</title>
+	</head>
+	<body>
+    <div class="navbar">
+      {% block navbar %}
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/signup/login">Login</a></li>
+        <li><a href="/signup/signup">Signup</a></li>
+        <li><a href="/profile/info">Info</a></li>
+        <li><a href="/profile/profiles">Profiles</a></li>
+        <li><a href="/admin">Admin</a></li>
+      </ul>
+      {% endblock %}
+    </div>
+    <div>{{ message }}</div>
+    <div>
+      {% block content %}{% endblock %}
+    </div>
+	</body>
+</html>

@@ -1,0 +1,200 @@
+{% extends "webapp.html" %}
+{% block content %}
+  {% load static %}
+  <script src="{% static '/js/app.js' %}"></script>
+<h1>Portfolio Pro Info.</h1>
+<div>
+  {{ time }}
+  <b>{{ message }}</b>
+</div>
+<hr>
+<b>Users.</b>
+<div>
+<!--
+  <form class="frmreg" action="profileinfo" method="post">
+  {% csrf_token %}
+-->
+  <div>
+    <div id="dvusers">
+    <div class="dvtbl">
+      <table id="tblusers">
+      <tbody>
+        <tr class="header">
+        <th>ID</th>
+        <th>Profile_number</th>
+        <th>Adress</th>
+        <th>Location</th>
+        <th>Latitude</th>
+        <th>Longitude</th>
+        <th>Info</th>
+        <th>Username</th>
+        </tr>
+        {% for x in users %}
+        <tr>
+        <td>{{ x.id }}</td>
+        <td>{{ x.Profile_number }}</td>
+        <td>{{ x.address }}</td>
+        <td>{{ x.location }}</td>
+        <td>{{ x.latitude }}</td>
+        <td>{{ x.longitude }}</td>
+        <td id="{{x.username}}">{{x}}</td>
+        <td><button class="btnSend" type="button" onclick="profileInfo('{{x.username}}')">{{x.username}}</button></td>
+        </tr>
+        <script type="text/javascript">
+          userLocation('{{x.username}},{{x.latitude}},{{x.longitude}}');
+        </script>
+        {% endfor %}
+      </tbody>
+      </table>
+    </div>
+    </div>
+  </div>
+<!--
+    <button type="submit">Info</button>
+  </form>
+-->
+</div>
+<hr>
+<h1>Edit profile</h1>
+<div>
+<hr>
+<div class="dvregister">
+  <form class="frmreg" action="/profile/edit" method="post">
+  {% csrf_token %}
+  <div class="dvreg">
+      <label>Profile_number:</label><br>
+      <input class="cinpt" type="text" id="profile_number" name="profile_number" placeholder="profile_number" value="{{ user.phone_number }}" maxlength="64" readonly  required/>
+  </div>
+  <div class="dvreg">
+      <label>Username:</label><br>
+      <input class="cinpt" type="text" id="username" name="username" placeholder="username" value="{{ user.username }}" maxlength="30"  required/>
+  </div>
+  <div class="dvreg">
+      <label>First_name:</label><br>
+      <input class="cinpt" type="text" id="first_name" name="first_name" placeholder="first_name" value="{{ user.first_name }}" maxlength="30"/>
+  </div>
+  <div class="dvreg">
+      <label>Last_name:</label><br>
+      <input class="cinpt" type="text" id="last_name" name="last_name" placeholder="last_name" maxlength="30" />
+  </div>
+  <div class="dvreg">
+      <label>Phone_number:</label><br>
+      <input class="cinpt" type="text" id="phone_number" name="phone_number" placeholder="phone_number" value="{{ user.phone_number }}" maxlength="30"/>
+  </div>
+  <div class="dvreg">
+      <label>Email:</label><br>
+      <input class="cinpt" type="email" id="email" name="email" placeholder="email" value="{{ user.email }}" maxlength="30" required />
+  </div>
+  <div class="dvreg">
+      <label>Password:</label><br>
+      <input class="cinpt" type="password" id="password" name="password" placeholder="password" maxlength="256" minlength="8" required />
+  </div>
+  <div class="dvreg">
+      <label>Location:</label><br>
+      <textarea id="location" name="location" placeholder="location" value="{{ user.location }}"></textarea>
+  </div>
+  <div class="dvreg">
+      <label>Longitude:</label><br>
+      <input class="cinpt" type="text" id="longitude" name="longitude" placeholder="longitude" value="{{ user.longitude }}" maxlength="128"/>
+  </div>
+  <div class="dvreg">
+      <label>Latitude:</label><br>
+      <input class="cinpt" type="text" id="latitude" name="latitude" placeholder="latitude" maxlength="128" />
+  </div>
+  <div class="dvreg">
+      <label>Address:</label><br>
+      <textarea id="address" name="address" placeholder="address" value="{{ user.addres }}"></textarea>
+  </div>
+  <div class="dvreg">
+  <label> Addres type: </label><br>
+  <select name="address_type">
+      <option value="Home" selected>[address_type]</option>
+      <option value="Business">Business</option>
+      <option value="Home">Home</option>
+      <option value="Other">Other</option>
+  </select>
+  </div>
+  <div class="dvreg">
+      <label>Street:</label><br>
+      <input class="cinpt" type="text" id="street" name="street" placeholder="street" value="{{ userx.street }}" maxlength="128"/>
+  </div>
+  <div class="dvreg">
+      <label>Town:</label><br>
+      <input class="cinpt" type="text" id="town" name="town" value="{{ userx.town }}" placeholder="town" maxlength="128" />
+  </div>
+  <div class="dvreg">
+      <label>City:</label><br>
+      <input class="cinpt" type="text" id="city" name="city" placeholder="city" value="{{ userx.city }}" maxlength="128"/>
+  </div>
+  <div class="dvreg">
+      <label>Province:</label><br>
+      <input class="cinpt" type="text" id="province" name="province" value="{{ userx.province }}" placeholder="province" maxlength="128" />
+  </div>
+  <div class="dvreg">
+      <label>Code:</label><br>
+      <input class="cinpt" type="text" id="code" name="code" placeholder="code" value="{{ userx.code }}" maxlength="32"/>
+  </div>
+  <div class="dvreg">
+      <label>Country:</label><br>
+      <input class="cinpt" type="text" id="country" name="country" value="{{ userx.country }}" placeholder="country" maxlength="128" />
+  </div>
+
+  <div class="dvreg">
+  <label> Language: </label><br>
+  <select name="language">
+      <option value="English" selected>[Language]</option>
+      <option value="English">English</option>
+      <option value="French">French</option>
+      <option value="Chinise">Chinese</option>
+  </select>
+  </div>
+  <div class="dvreg">
+  <label> UserType: </label><br>
+  <select name="usertype" id="usertype">
+      <option value="Staff" selected>[UserType]</option>
+      <option value="Staff">Staff</option>
+      <option value="Company">Company</option>
+      <option value="Admin">Admin</option>
+      <option value="Other">Other</option>
+  </select>
+  </div>
+  <div class="dvreg">
+      <label> Type: </label><br>
+      <p class="sadmnOpt"><label> <input type="checkbox" name="useroffice" value="Office" id="useroffice">Office</label></p>
+      <p class="sadmnOpt"><label> <input type="checkbox" name="usertech" value="Tech" id="usertech">Tech</label></p>
+      <p class="sadmnOpt"><label> <input type="checkbox" name="admin" value="Management" id="admin">Management</label></p>
+  </div>
+  <div class="dvreg" id="divCompany" style="display: none;">
+      <label>Company:</label><br>
+      <input class="cinpt" type="text" id="company" name="company" placeholder="Company" value="{{ company }}" maxlength="30"/>
+  </div>
+  <div class="dvreg" id="divAdmin" style="display: none;">
+      <label>Code:</label><br>
+      <input class="cinpt" type="password" id="fcode" name="fcode" placeholder="code" value="{{ code }}" maxlength="30"/>
+  </div>
+  <div class="dvreg">
+      <label>Notes:</label><br>
+      <textarea id="notes" name="notes" placeholder="Notes." value="{{ user.notes }}"></textarea>
+  </div>
+  <p><input type="submit" value="OK"/></p>
+  </form>
+</div>
+</div>
+<hr>
+<h1>Delete profile</h1>
+<p><a href="/profile/deleteprofile">Delete</a></p>
+<hr>
+<div class="dvlogs">
+  <div class="log" id="log"></div>
+  <div class="logs" id="logs"></div>
+</div>
+<hr>
+<div class="gdvuiprofile">
+  <img src="{% static app.map %}" alt="{{ app.info }}">
+</div>
+{{ app.map }}
+<div class="dvinfo">
+  {{ app.info }}
+</div>
+<hr>
+{% endblock %}
