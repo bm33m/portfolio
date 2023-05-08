@@ -55,16 +55,16 @@ def profile(request):
     infox = now
     users = ProfileApp()
     try:
-       userp = {}
-       userp['pemail'] = request.session['pemail']
-       userp['puname'] = request.session['puname']
-       userp['paccn'] = request.session['paccn']
-       users = ProfileApp.objects.filter(email=userp['pemail'], profile_number=userp['paccn']).values()
-       userxy = UserApp.objects.filter(email=userp['pemail'], profile_number=userp['paccn']).values()
-       return render(
-           request, 'profile.html', context={'pname': pname, 'message': now,
-           'user': users, 'userx': userxy, 'app': app, 'ip': ip, 'year': year},
-       )
+        userp = {}
+        userp['pemail'] = request.session['pemail']
+        userp['puname'] = request.session['puname']
+        userp['paccn'] = request.session['paccn']
+        users = ProfileApp.objects.filter(email=userp['pemail'], profile_number=userp['paccn']).values()
+        userxy = UserApp.objects.filter(email=userp['pemail'], profile_number=userp['paccn']).values()
+        return render(
+            request, 'profile.html', context={'pname': pname, 'message': now,
+            'user': users, 'userx': userxy, 'app': app, 'ip': ip, 'year': year},
+        )
     except Exception as e:
         infox = "Profile: %s %s"%(now, 'Login...required...')
         print("Profile: %s %s"%(now, e))
@@ -85,16 +85,16 @@ def deleteProfile(request):
     infox = now
     users = ProfileApp()
     try:
-       userp = {}
-       userp['pemail'] = request.session['pemail']
-       userp['puname'] = request.session['puname']
-       userp['paccn'] = request.session['paccn']
-       users = ProfileApp.objects.filter(email=userp['pemail'], profile_number=userp['paccn']).values()
-       userxy = UserApp.objects.filter(email=userp['pemail'], profile_number=userp['paccn']).values()
-       return render(
-           request, 'delete.html', context={'pname': pname, 'message': now,
-           'user': users, 'userx': userxy, 'app': app, 'ip': ip, 'year': year},
-       )
+        userp = {}
+        userp['pemail'] = request.session['pemail']
+        userp['puname'] = request.session['puname']
+        userp['paccn'] = request.session['paccn']
+        users = ProfileApp.objects.filter(email=userp['pemail'], profile_number=userp['paccn']).values()
+        userxy = UserApp.objects.filter(email=userp['pemail'], profile_number=userp['paccn']).values()
+        return render(
+            request, 'delete.html', context={'pname': pname, 'message': now,
+            'user': users, 'userx': userxy, 'app': app, 'ip': ip, 'year': year},
+        )
     except Exception as e:
         infox = "deleteProfile: %s %s"%(now, 'Login...required...')
         print("deleteProfile: %s %s"%(now, e))
@@ -140,27 +140,21 @@ def info(request):
     map = ['sky', 'wgs84', 'wgs84map']
     rand1 = random.randint(0, len(map) - 1)
     app = {"map": '%s%s.jpg'%(pathTo, map[rand1]), "info": "%s %s"%(now, map[rand1])}
-    users = map
     infox = "Welcome back: %s"%(now)
+    users = userProfile()
+    profiles = ProfileApp()
     try:
-        users = userProfile()
-        userp = ProfileApp()
-        userx = UserApp()
-        namex = userx.username
-        print("01 namex: %s %s"%(namex, now))
-        print("02 profile: %s, %s, %s"%(users, userp, userx))
-        try:
-            users = ProfileApp.objects.all()
-            #users = ProfileApp.objects.all().values()
-        except Exception as e:
-            print("info: %s %s"%(now, e))
+        #profiles = ProfileApp.objects.all()
+        profiles = ProfileApp.objects.all().values()
+        users = UserApp.objects.all().values()
     except Exception as e:
         print("Index %s %s"%(now, e))
         infox = ("Info: %s %s"%(now, 'system offline.'))
         users = userProfile()
+        profiles = ProfileApp()
     return render(
         request, 'info.html', context={'pname': pname, 'message': infox,
-        'users': users, 'app': app, 'ip': ip, 'year': year},
+        'profiles': profiles, 'users': users, 'app': app, 'ip': ip, 'year': year},
     )
 
 def edit(request):

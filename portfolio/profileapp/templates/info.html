@@ -8,6 +8,53 @@
   <b>{{ message }}</b>
 </div>
 <hr>
+<b>Profiles.</b>
+<div>
+<!--
+  <form class="frmreg" action="profileinfo" method="post">
+  {% csrf_token %}
+-->
+  <div>
+    <div id="dvusers">
+    <div class="dvtbl">
+      <table id="tblusers">
+      <tbody>
+        <tr class="header">
+        <th>ID</th>
+        <th>Profile_number</th>
+        <th>Adress</th>
+        <th>Location</th>
+        <th>Latitude</th>
+        <th>Longitude</th>
+        <th>Info</th>
+        <th>Username</th>
+        </tr>
+        {% for x in profiles %}
+        <tr>
+        <td>{{ x.id }}</td>
+        <td>{{ x.Profile_number }}</td>
+        <td>{{ x.address }}</td>
+        <td>{{ x.location }}</td>
+        <td>{{ x.latitude }}</td>
+        <td>{{ x.longitude }}</td>
+        <td id="p{{x.username}}">{{x}}</td>
+        <td><button class="btnSend" type="button" onclick="profileInfo('p{{x.username}}')">{{x.username}}</button></td>
+        </tr>
+        <script type="text/javascript">
+          userLocation('{{x.username}},{{x.latitude}},{{x.longitude}}');
+        </script>
+        {% endfor %}
+      </tbody>
+      </table>
+    </div>
+    </div>
+  </div>
+<!--
+    <button type="submit">Info</button>
+  </form>
+-->
+</div>
+<hr>
 <b>Users.</b>
 <div>
 <!--
@@ -37,8 +84,8 @@
         <td>{{ x.location }}</td>
         <td>{{ x.latitude }}</td>
         <td>{{ x.longitude }}</td>
-        <td id="{{x.username}}">{{x}}</td>
-        <td><button class="btnSend" type="button" onclick="profileInfo('{{x.username}}')">{{x.username}}</button></td>
+        <td id="u{{x.username}}">{{x}}</td>
+        <td><button class="btnSend" type="button" onclick="profileInfo('u{{x.username}}')">{{x.username}}</button></td>
         </tr>
         <script type="text/javascript">
           userLocation('{{x.username}},{{x.latitude}},{{x.longitude}}');

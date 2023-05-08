@@ -8,7 +8,7 @@
   <b>{{ message }}</b>
 </div>
 <hr>
-<b>Users.</b>
+<b>Profile.</b>
 <div>
 <!--
   <form class="frmreg" action="profileinfo" method="post">
@@ -29,7 +29,7 @@
         <th>Info</th>
         <th>Username</th>
         </tr>
-        {% for x in users %}
+        {% for x in user %}
         <tr>
         <td>{{ x.id }}</td>
         <td>{{ x.Profile_number }}</td>
@@ -75,7 +75,7 @@
   </div>
   <div class="dvreg">
       <label>Last_name:</label><br>
-      <input class="cinpt" type="text" id="last_name" name="last_name" placeholder="last_name" maxlength="30" />
+      <input class="cinpt" type="text" id="last_name" name="last_name" placeholder="last_name" value="{{ user.first_name }}" maxlength="30" />
   </div>
   <div class="dvreg">
       <label>Phone_number:</label><br>
@@ -83,11 +83,11 @@
   </div>
   <div class="dvreg">
       <label>Email:</label><br>
-      <input class="cinpt" type="email" id="email" name="email" placeholder="email" value="{{ user.email }}" maxlength="30" required />
+      <input class="cinpt" type="email" id="email" name="email" placeholder="email" value="{{ user.email }}" maxlength="30" required readonly />
   </div>
   <div class="dvreg">
       <label>Password:</label><br>
-      <input class="cinpt" type="password" id="password" name="password" placeholder="password" maxlength="256" minlength="8" required />
+      <input class="cinpt" type="password" id="password" name="password" placeholder="password" maxlength="256" minlength="8" />
   </div>
   <div class="dvreg">
       <label>Location:</label><br>
@@ -99,7 +99,7 @@
   </div>
   <div class="dvreg">
       <label>Latitude:</label><br>
-      <input class="cinpt" type="text" id="latitude" name="latitude" placeholder="latitude" maxlength="128" />
+      <input class="cinpt" type="text" id="latitude" name="latitude" placeholder="latitude" value="{{ user.latitude }}" maxlength="128" />
   </div>
   <div class="dvreg">
       <label>Address:</label><br>

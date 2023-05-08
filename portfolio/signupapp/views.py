@@ -6,7 +6,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.utils.timezone import make_aware
 from django.conf import settings
-from profileapp.models import ProfileApp
+from profileapp.models import ProfileApp, userProfile
 from .models import UserApp, LoginApp, SignupForm, LoginForm
 import pprint
 import json
@@ -43,34 +43,48 @@ def signin(request):
         qrb = request.POST
         try:
             userx = ProfileApp()
-            userx.email = qrb['email'].strip()
+            userxp = UserApp()
+            email = qrb['email'].strip()
             password = qrb['password'].strip()
-            salt = userx.regencode(userx.email, pname)
+            salt = userx.regencode(email, pname)
             pkey = userx.reghash(salt, password, pname)
-            hashpassword = userx.reghash(userx.email, pkey, pname)
-            userx.password = hashpassword
-            loginx = ProfileApp.objects.filter(email=userx.email, password=userx.password)
+            hashpassword = userx.reghash(email, pkey, pname)
+            #userx.password = hashpassword
+            #userx.email = email
+            loginx = ProfileApp.objects.filter(email=email, password=hashpassword)
             accn = loginx[0].profile_number
             uname = loginx[0].username
             email = loginx[0].email
             id = loginx[0].id
             form = LoginForm(qrb)
             if form.is_valid():
-                print("%s-%s-%s"%(now, userxyz.username, userxyz.email))
-                request.session['pemail'] = eml.strip()
+                #userxp = UserApp.objects.filter(email=email, username=uname)
+                #userxp = UserApp.objects.filter(email=email, username=uname).values()
+                #userxp = userProfile()
+                request.session['pemail'] = email
                 request.session['puname'] = uname
                 request.session['paccn'] = accn
-                backupXY(loginx.values(), qrb, 'signin')
+                #backupXY(loginx.values(), qrb, 'signin')
                 return render(
                     request, 'profile.html', context={'pname': pname, 'message': now,
-                    'user':loginx.values() , 'cards': map, 'app': app, 'ip': ip, 'year': year},
+                    'user':loginx.values(), 'userx': userxp, 'cards': map,
+                    'app': app, 'ip': ip, 'year': year},
                 )
         except Exception as e:
-            print("Signin: %s %s"%(now, e))
+            print("Exception Signin: %s %s"%(now, e))
             info = ("Signin: %s %s"%(now, 'error...'))
+            return render(
+                request, 'loginindex.html', context={'pname': pname, 'message': info,
+                'cards': map, 'app': app, 'ip': ip, 'year': year},
+            )
+    #return render(
+    #    request, 'loginindex.html', context={'pname': pname, 'message': info,
+    #    'cards': map, 'app': app, 'ip': ip, 'year': year},
+    #)
     return render(
-        request, 'loginindex.html', context={'pname': pname, 'message': info,
-        'cards': map, 'app': app, 'ip': ip, 'year': year},
+        request, 'profile.html', context={'pname': pname, 'message': now,
+        'user':loginx.values(), 'userx': userxp, 'cards': map,
+        'app': app, 'ip': ip, 'year': year},
     )
 
 def logout(request):
@@ -160,7 +174,9 @@ def register(request):
             form = SignupForm(qrb)
             if form.is_valid():
                 print("%s-%s-%s"%(now, userx.username, userx.email))
+                userx.epverifieddate = now
                 userx.date_added = now
+                userx.date_modified = now
                 done = userx.save()
                 print("%s-%s-%s"%(now, userx.username, done))
                 userxy = backupX(userx, qrb)
@@ -185,9 +201,10 @@ def backupX(userx, requestx):
     year = now.year
     try:
         userxy = UserApp()
-        userxy.user.username = userx.username
-        userxy.user.email = userx.email
-        userxy.user.password = userx.password
+        #userxy.user.username = userx.username
+        #userxy.user.email = userx.email
+        #userxy.user.password = userx.password
+        userxy.user_id = userx.id
         userxy.profile_number = userx.profile_number
         userxy.username = userx.username
         userxy.email = userx.email
@@ -198,7 +215,7 @@ def backupX(userx, requestx):
         userxy.longitude = requestx['location'].strip()
         userxy.latitude = requestx['latitude'].strip()
         userxy.address = userx.address
-        userxy.street = requestx.street
+        userxy.street = requestx['street'].strip()
         userxy.town = requestx['town'].strip()
         userxy.city = requestx['city'].strip()
         userxy.province = requestx['province'].strip()
@@ -210,6 +227,7 @@ def backupX(userx, requestx):
         if form.is_valid():
             print("%s-%s-%s"%(now, userxy.username, userxy.email))
             userxy.date_added = now
+            userxy.date_modified = now
             done = userxy.save()
             print("%s-%s-%s"%(now, userxy.username, done))
     except Exception as e:
@@ -228,12 +246,15 @@ def backupXY(userx, requestx, logtype='signup'):
         userxyz.username = userx.username
         userxyz.email = userx.email
         userxyz.log_type = logtype
-        userxyz.user_type = userx.user_type
+        userxyz.user_type = userx.usertype
         notes = userx.notes
+        if (logtype == 'login'):
+            userxyz.date_login = now
         if (logtype == 'logout'):
             userxyz.date_logout = now
-        else:
+        if (logtype == 'signup'):
             userxyz.date_login = now
+            userxyz.date_logout = now
         form = LoginForm(requestx)
         if form.is_valid():
             print("%s-%s-%s"%(now, userxyz.username, userxyz.email))
