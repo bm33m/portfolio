@@ -8,7 +8,7 @@
   <b>{{ message }}</b>
 </div>
 <hr>
-<b>Users.</b>
+<b>Profile.</b>
 <div>
 <!--
   <form class="frmreg" action="profileinfo" method="post">
@@ -55,7 +55,12 @@
 -->
 </div>
 <hr>
+<div>{{user}}</div>
+<div>{{userx}}</div>
+<div>{{users}}</div>
+<hr>
 <h1>Delete profile</h1>
+<p>{{user.username}}</p>
 <div>
 <hr>
 <div class="dvregister">
@@ -63,7 +68,7 @@
   {% csrf_token %}
   <div class="dvreg">
       <label>Profile_number:</label><br>
-      <input class="cinpt" type="text" id="profile_number" name="profile_number" placeholder="profile_number" value="{{ user.phone_number }}" maxlength="64" readonly  required/>
+      <input class="cinpt" type="text" id="profile_number" name="profile_number" placeholder="profile_number" value="{{ user.profile_number }}" maxlength="64" readonly  required/>
   </div>
   <div class="dvreg">
       <label>Username:</label><br>
@@ -75,7 +80,7 @@
   </div>
   <div class="dvreg">
       <label>Last_name:</label><br>
-      <input class="cinpt" type="text" id="last_name" name="last_name" placeholder="last_name" maxlength="30" />
+      <input class="cinpt" type="text" id="last_name" name="last_name" placeholder="last_name" value="{{ user.last_name }}" maxlength="30" />
   </div>
   <div class="dvreg">
       <label>Phone_number:</label><br>
@@ -83,11 +88,11 @@
   </div>
   <div class="dvreg">
       <label>Email:</label><br>
-      <input class="cinpt" type="email" id="email" name="email" placeholder="email" value="{{ user.email }}" maxlength="30" required />
+      <input class="cinpt" type="email" id="email" name="email" placeholder="email" value="{{ user.email }}" maxlength="30" required readonly />
   </div>
   <div class="dvreg">
       <label>Password:</label><br>
-      <input class="cinpt" type="password" id="password" name="password" placeholder="password" maxlength="256" minlength="8" required />
+      <input class="cinpt" type="password" id="password" name="password" placeholder="password" maxlength="256" minlength="8" />
   </div>
   <div class="dvreg">
       <label>Location:</label><br>
@@ -99,7 +104,7 @@
   </div>
   <div class="dvreg">
       <label>Latitude:</label><br>
-      <input class="cinpt" type="text" id="latitude" name="latitude" placeholder="latitude" maxlength="128" />
+      <input class="cinpt" type="text" id="latitude" name="latitude" placeholder="latitude" value="{{ user.latitude }}" maxlength="128" />
   </div>
   <div class="dvreg">
       <label>Address:</label><br>
@@ -176,10 +181,17 @@
       <label>Notes:</label><br>
       <textarea id="notes" name="notes" placeholder="Notes." value="{{ user.notes }}"></textarea>
   </div>
+  <div class="dvreg" id="userAdmin">
+      <label>User_id:</label><br>
+      <input class="cinpt" type="text" id="user_id" name="user_id" placeholder="user_id" value="{{ userx.user_id }}" maxlength="256"/>
+  </div>
   <p><input type="submit" value="Delete"/></p>
   </form>
 </div>
 </div>
+<hr>
+<h1>Profile</h1>
+<p><a href="/profile/">Profile</a></p>
 <hr>
 <div class="dvlogs">
   <div class="log" id="log"></div>
@@ -193,5 +205,7 @@
 <div class="dvinfo">
   {{ app.info }}
 </div>
+<hr>
+{{form}}
 <hr>
 {% endblock %}

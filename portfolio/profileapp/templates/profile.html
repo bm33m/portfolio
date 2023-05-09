@@ -29,7 +29,7 @@
         <th>Info</th>
         <th>Username</th>
         </tr>
-        {% for x in user %}
+        {% for x in users %}
         <tr>
         <td>{{ x.id }}</td>
         <td>{{ x.Profile_number }}</td>
@@ -55,7 +55,12 @@
 -->
 </div>
 <hr>
+<div>{{user}}</div>
+<div>{{userx}}</div>
+<div>{{users}}</div>
+<hr>
 <h1>Edit profile</h1>
+<p>{{user.username}}</p>
 <div>
 <hr>
 <div class="dvregister">
@@ -63,7 +68,7 @@
   {% csrf_token %}
   <div class="dvreg">
       <label>Profile_number:</label><br>
-      <input class="cinpt" type="text" id="profile_number" name="profile_number" placeholder="profile_number" value="{{ user.phone_number }}" maxlength="64" readonly  required/>
+      <input class="cinpt" type="text" id="profile_number" name="profile_number" placeholder="profile_number" value="{{ user.profile_number }}" maxlength="64" readonly  required/>
   </div>
   <div class="dvreg">
       <label>Username:</label><br>
@@ -75,7 +80,7 @@
   </div>
   <div class="dvreg">
       <label>Last_name:</label><br>
-      <input class="cinpt" type="text" id="last_name" name="last_name" placeholder="last_name" value="{{ user.first_name }}" maxlength="30" />
+      <input class="cinpt" type="text" id="last_name" name="last_name" placeholder="last_name" value="{{ user.last_name }}" maxlength="30" />
   </div>
   <div class="dvreg">
       <label>Phone_number:</label><br>
@@ -176,7 +181,11 @@
       <label>Notes:</label><br>
       <textarea id="notes" name="notes" placeholder="Notes." value="{{ user.notes }}"></textarea>
   </div>
-  <p><input type="submit" value="OK"/></p>
+  <div class="dvreg" id="userAdmin">
+      <label>User_id:</label><br>
+      <input class="cinpt" type="text" id="user_id" name="user_id" placeholder="user_id" value="{{ userx.user_id }}" maxlength="256"/>
+  </div>
+  <p><input type="submit" value="Update"/></p>
   </form>
 </div>
 </div>
@@ -196,5 +205,7 @@
 <div class="dvinfo">
   {{ app.info }}
 </div>
+<hr>
+{{form}}
 <hr>
 {% endblock %}

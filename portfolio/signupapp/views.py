@@ -39,53 +39,63 @@ def signin(request):
     rand1 = random.randint(0, len(map) - 1)
     app = {"map": '%s%s.jpg'%(pathTo, map[rand1]), "info": "%s %s"%(now, map[rand1])}
     info = "Signin: %s"%(now)
+    form = {}
     if request.method == 'POST':
         qrb = request.POST
         try:
             userx = ProfileApp()
             userxp = UserApp()
+            users = userProfile()
             email = qrb['email'].strip()
             password = qrb['password'].strip()
             salt = userx.regencode(email, pname)
             pkey = userx.reghash(salt, password, pname)
             hashpassword = userx.reghash(email, pkey, pname)
-            #userx.password = hashpassword
-            #userx.email = email
+            userx.password = hashpassword
+            userx.email = email
             loginx = ProfileApp.objects.filter(email=email, password=hashpassword)
+            print("loginx: %s %s"%(loginx[0], now))
             accn = loginx[0].profile_number
             uname = loginx[0].username
             email = loginx[0].email
             id = loginx[0].id
+            print("loginx: %s, id: %s %s"%(uname, id, now))
             form = LoginForm(qrb)
             if form.is_valid():
-                #userxp = UserApp.objects.filter(email=email, username=uname)
-                #userxp = UserApp.objects.filter(email=email, username=uname).values()
-                #userxp = userProfile()
-                request.session['pemail'] = email
-                request.session['puname'] = uname
-                request.session['paccn'] = accn
-                #backupXY(loginx.values(), qrb, 'signin')
-                return render(
-                    request, 'profile.html', context={'pname': pname, 'message': now,
-                    'user':loginx.values(), 'userx': userxp, 'cards': map,
-                    'app': app, 'ip': ip, 'year': year},
-                )
+                print("loginx: %s, email: %s %s"%(accn, email, now))
+                #
+            else:
+                print("loginForm error: %s, email: %s %s"%(accn, email, now))
+            request.session['pemail'] = email
+            request.session['puname'] = uname
+            request.session['paccn'] = accn
+            request.session['pid'] = id
+            print("Session: id %s %s %s"%(id, loginx, now))
+            userxp = UserApp.objects.filter(email=email, username=uname)
+            #userxp = UserApp.objects.filter(email=email, username=uname).values()
+            print("userxp: %s %s"%(userxp, now))
+            #backupXY(loginx.values(), qrb, 'signin')
+            return render(
+                request, 'profile.html', context={'pname': pname, 'message': now,
+                'user':loginx[0], 'userx': userxp, 'users': users, 'cards': map,
+                'app': app, 'ip': ip, 'year': year},
+            )
         except Exception as e:
             print("Exception Signin: %s %s"%(now, e))
             info = ("Signin: %s %s"%(now, 'error...'))
-            return render(
-                request, 'loginindex.html', context={'pname': pname, 'message': info,
-                'cards': map, 'app': app, 'ip': ip, 'year': year},
-            )
-    #return render(
-    #    request, 'loginindex.html', context={'pname': pname, 'message': info,
-    #    'cards': map, 'app': app, 'ip': ip, 'year': year},
-    #)
+            #return render(
+            #    request, 'loginindex.html', context={'pname': pname, 'message': info,
+            #    'cards': map, 'app': app, 'ip': ip, 'year': year, 'form': form},
+            #)
     return render(
-        request, 'profile.html', context={'pname': pname, 'message': now,
-        'user':loginx.values(), 'userx': userxp, 'cards': map,
-        'app': app, 'ip': ip, 'year': year},
+        request, 'loginindex.html', context={'pname': pname, 'message': info,
+        'cards': map, 'app': app, 'ip': ip, 'year': year, 'form': form},
     )
+    #return render(
+    #    request, 'profile.html', context={'pname': pname, 'message': now,
+    #    'user':loginx[0], 'userx': userxp, 'users': users, 'cards': map,
+    #    'app': app, 'ip': ip, 'year': year, 'form': form},
+    #)
 
 def logout(request):
     pname = settings.PRO_NAME
@@ -101,9 +111,11 @@ def logout(request):
         request.session['pemail'] = " "
         request.session['puname'] = " "
         request.session['paccn'] = " "
+        request.session['pid'] = " "
         del request.session['pemail']
         del request.session['puname']
         del request.session['paccn']
+        del request.session['pid']
         request.session.clear()
         request.session.flush()
     except Exception as e:
@@ -146,6 +158,7 @@ def register(request):
     userx = ProfileApp()
     userxy = UserApp()
     done = ("Singup: %s"%(now))
+    form = {}
     if request.method == 'POST':
         qrb = request.POST
         try:
@@ -161,7 +174,7 @@ def register(request):
             userx.password = hashpassword
             userx.usertype = qrb['usertype'].strip()
             #userx.usertypesa = qrb['usertypesa'].strip()
-            phone_number = qrb['phone_number'].strip()
+            userx.phone_number = qrb['phone_number'].strip()
             userx.location = qrb['location'].strip()
             userx.longitude = qrb['location'].strip()
             userx.latitude = qrb['latitude'].strip()
@@ -190,7 +203,7 @@ def register(request):
     return render(
         request, 'regindex.html', context={'pname': pname, 'message': done,
         'user': userx, 'userx': userxy, 'cards': map, 'app': app,
-        'ip': ip, 'year': year},
+        'ip': ip, 'year': year, 'form': form},
     )
 
 def backupX(userx, requestx):
@@ -204,12 +217,13 @@ def backupX(userx, requestx):
         #userxy.user.username = userx.username
         #userxy.user.email = userx.email
         #userxy.user.password = userx.password
-        userxy.user_id = userx.id
+        #userxy.user_id = userx.id
+        userxy.user_id = requestx['user_id'].strip()
         userxy.profile_number = userx.profile_number
         userxy.username = userx.username
         userxy.email = userx.email
-        userxy.usertype = userx.usertype
-        userxy.usertypesa = userx.usertypesa
+        #userxy.usertype = userx.usertype
+        #userxy.usertypesa = userx.usertypesa
         userxy.phone_number = userx.phone_number
         userxy.location = userx.location
         userxy.longitude = requestx['location'].strip()

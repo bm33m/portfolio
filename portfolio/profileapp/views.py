@@ -6,6 +6,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.utils.timezone import make_aware
 from django.conf import settings
+from django.contrib.auth.models import User
 from .models import ProfileApp, userProfile
 from signupapp.models import UserApp, LoginApp, SignupForm, LoginForm, EditForm
 import pprint
@@ -29,9 +30,7 @@ def index(request):
         users = userProfile()
         userp = ProfileApp()
         userx = UserApp()
-        namex = userx.username
-        print("01 namex: %s %s"%(namex, now))
-        print("02 profile: %s, %s, %s"%(users, userp, userx))
+        adimn = {}
         #users = ProfileApp.objects.all()
         #users = ProfileApp.objects.all().values()
     except Exception as e:
@@ -59,11 +58,18 @@ def profile(request):
         userp['pemail'] = request.session['pemail']
         userp['puname'] = request.session['puname']
         userp['paccn'] = request.session['paccn']
-        users = ProfileApp.objects.filter(email=userp['pemail'], profile_number=userp['paccn']).values()
-        userxy = UserApp.objects.filter(email=userp['pemail'], profile_number=userp['paccn']).values()
+        userp['pid'] = request.session['pid']
+        user = ProfileApp.objects.filter(email=userp['pemail'], profile_number=userp['paccn'])
+        userx = UserApp.objects.filter(email=userp['pemail'], profile_number=userp['paccn'])
+        users = user.values()
+        try:
+            user = user[0]
+            userx = userx[0]
+        except Exception as e:
+            print("Profile exception: %s %s"%(now, e))
         return render(
             request, 'profile.html', context={'pname': pname, 'message': now,
-            'user': users, 'userx': userxy, 'app': app, 'ip': ip, 'year': year},
+            'user': user, 'userx': userx, 'users': users, 'app': app, 'ip': ip, 'year': year},
         )
     except Exception as e:
         infox = "Profile: %s %s"%(now, 'Login...required...')
@@ -89,11 +95,18 @@ def deleteProfile(request):
         userp['pemail'] = request.session['pemail']
         userp['puname'] = request.session['puname']
         userp['paccn'] = request.session['paccn']
-        users = ProfileApp.objects.filter(email=userp['pemail'], profile_number=userp['paccn']).values()
-        userxy = UserApp.objects.filter(email=userp['pemail'], profile_number=userp['paccn']).values()
+        userp['pid'] = request.session['pid']
+        user = ProfileApp.objects.filter(email=userp['pemail'], profile_number=userp['paccn'])
+        userx = UserApp.objects.filter(email=userp['pemail'], profile_number=userp['paccn'])
+        users = user.values()
+        try:
+            user = user[0]
+            userx = userx[0]
+        except Exception as e:
+            print("Delete Profile exception: %s %s"%(now, e))
         return render(
             request, 'delete.html', context={'pname': pname, 'message': now,
-            'user': users, 'userx': userxy, 'app': app, 'ip': ip, 'year': year},
+            'user': user, 'userx': userx, 'users': users, 'app': app, 'ip': ip, 'year': year},
         )
     except Exception as e:
         infox = "deleteProfile: %s %s"%(now, 'Login...required...')
@@ -143,10 +156,12 @@ def info(request):
     infox = "Welcome back: %s"%(now)
     users = userProfile()
     profiles = ProfileApp()
+    admin = {}
     try:
         #profiles = ProfileApp.objects.all()
         profiles = ProfileApp.objects.all().values()
         users = UserApp.objects.all().values()
+        admin = User.objects.all().values()
     except Exception as e:
         print("Index %s %s"%(now, e))
         infox = ("Info: %s %s"%(now, 'system offline.'))
@@ -154,7 +169,8 @@ def info(request):
         profiles = ProfileApp()
     return render(
         request, 'info.html', context={'pname': pname, 'message': infox,
-        'profiles': profiles, 'users': users, 'app': app, 'ip': ip, 'year': year},
+        'profiles': profiles, 'users': users, 'admin': admin,
+        'app': app, 'ip': ip, 'year': year},
     )
 
 def edit(request):
@@ -166,60 +182,61 @@ def edit(request):
     map = ['sky', 'wgs84', 'wgs84map']
     rand1 = random.randint(0, len(map) - 1)
     app = {"map": '%s%s.jpg'%(pathTo, map[rand1]), "info": "%s %s"%(now, map[rand1])}
-    userx = ProfileApp()
-    userxy = UserApp()
+    user = ProfileApp()
+    userx = UserApp()
+    users = userProfile()
     done = ("Edit: %s"%(now))
     if request.method == 'POST':
         qrb = request.POST
         try:
-            #userx = ProfileApp.objects.filter(email=userx.email, profile_number=userx.profile_number)
+            #user = ProfileApp.objects.filter(email=userx.email, profile_number=userx.profile_number)
             userp = {}
             userp['pemail'] = request.session['pemail']
             userp['puname'] = request.session['puname']
             userp['paccn'] = request.session['paccn']
-            userx = ProfileApp.objects.filter(email=userp['pemail'], profile_number=userp['paccn']).values()
-            userxy = UserApp.objects.filter(email=userp['pemail'], profile_number=userp['paccn']).values()
-            #accn = userx[0].profile_number
-            #uname = userx[0].username
-            #email = userx[0].email
-            #userx.profile_number = userx.account()
-            #userx.username = qrb['username'].strip()
-            userx.first_name = qrb['first_name'].strip()
-            userx.last_name = qrb['last_name'].strip()
-            #userx.email = qrb['email'].strip()
+            user = ProfileApp.objects.filter(email=userp['pemail'], profile_number=userp['paccn']).values()
+            #userx = UserApp.objects.filter(email=userp['pemail'], profile_number=userp['paccn']).values()
+            #accn = user[0].profile_number
+            #uname = user[0].username
+            #email = user[0].email
+            #user.profile_number = userx.account()
+            #user.username = qrb['username'].strip()
+            user.first_name = qrb['first_name'].strip()
+            user.last_name = qrb['last_name'].strip()
+            #user.email = qrb['email'].strip()
             #password = qrb['password'].strip()
             #salt = userx.regencode(userx.email, pname)
             #pkey = userx.reghash(salt, password, pname)
             #hashpassword = userx.reghash(userx.email, pkey, pname)
             #userx.password = hashpassword
-            userx.usertype = qrb['usertype'].strip()
+            #userx.usertype = qrb['usertype'].strip()
             #userx.usertypesa = qrb['usertypesa'].strip()
-            phone_number = qrb['phone_number'].strip()
-            userx.location = qrb['location'].strip()
-            userx.longitude = qrb['location'].strip()
-            userx.latitude = qrb['latitude'].strip()
-            userx.address = qrb['address'].strip()
-            userx.address_type = qrb['address_type'].strip()
-            userx.language = qrb['language'].strip()
+            user.phone_number = qrb['phone_number'].strip()
+            user.location = qrb['location'].strip()
+            user.longitude = qrb['location'].strip()
+            user.latitude = qrb['latitude'].strip()
+            user.address = qrb['address'].strip()
+            user.address_type = qrb['address_type'].strip()
+            user.language = qrb['language'].strip()
             #userx.admin = qrb['admin'].strip()
             #userx.company = qrb['company'].strip()
-            userx.notes = qrb['notes'].strip()
+            user.notes = qrb['notes'].strip()
             form = EditForm(qrb)
             if form.is_valid():
-                print("%s-%s-%s"%(now, userx.username, userx.email))
-                userx.date_modified = now
-                done = userx.save()
-                print("%s-%s-%s"%(now, userx.username, done))
-                #userxy = backupX(userx, qrb)
-                #backupXY(userx, qrb)
-                done = "Edit done: %s-%s-%s"%(now, userx.username, done)
+                print("%s-%s-%s"%(now, user.username, user.email))
+                user.date_modified = now
+                done = user.save()
+                print("%s-%s-%s"%(now, user.username, done))
+                #userx = backupX(user, qrb)
+                #backupXY(user, qrb)
+                done = "Edit done: %s-%s-%s"%(now, user.username, done)
             return render(
                 request, 'profile.html', context={'pname': pname, 'message': done,
-                'user': users, 'userx': userxy, 'app': app, 'ip': ip, 'year': year},
+                'user': user, 'userx': userx, 'users': users,  'app': app, 'ip': ip, 'year': year},
             )
         except Exception as e:
             print("Edit: %s-%s"%(now, e))
-            done = '# System offline: %s'%(mytime2())
+            done = '#Edit System offline: %s'%(mytime2())
     else:
         done = "Login: %s"%(now)
     return render(
