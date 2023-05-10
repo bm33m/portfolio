@@ -6,6 +6,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.utils.timezone import make_aware
 from django.conf import settings
+from django.contrib.auth.models import User
 from profileapp.models import ProfileApp, userProfile
 from .models import UserApp, LoginApp, SignupForm, LoginForm
 import pprint
@@ -191,7 +192,7 @@ def register(request):
                 userx.date_added = now
                 userx.date_modified = now
                 done = userx.save()
-                print("%s-%s-%s"%(now, userx.username, done))
+                print("Signup01: %s-%s-%s"%(now, userx.username, done))
                 userxy = backupX(userx, qrb)
                 backupXY(userx, qrb)
                 done = "Singup done: %s-%s-%s"%(now, userx.username, done)
@@ -218,7 +219,18 @@ def backupX(userx, requestx):
         #userxy.user.email = userx.email
         #userxy.user.password = userx.password
         #userxy.user_id = userx.id
-        userxy.user_id = requestx['user_id'].strip()
+        user_id = requestx['user_id'].strip()
+        user_name = requestx['user_name'].strip()
+        #
+        #userxy.user = User.objects.filter(id=user_id, username=userx.username, email=userx.email)
+        #UserApp.user" must be a "User" instance.
+        #
+        xuser = User()
+        xuser.id = user_id
+        xuser.username = user_name
+        xuser.email = userx.email
+        userxy.user = xuser
+        #
         userxy.profile_number = userx.profile_number
         userxy.username = userx.username
         userxy.email = userx.email
@@ -239,11 +251,17 @@ def backupX(userx, requestx):
         userxy.notes = userx.notes
         form = SignupForm(requestx)
         if form.is_valid():
-            print("%s-%s-%s"%(now, userxy.username, userxy.email))
-            userxy.date_added = now
-            userxy.date_modified = now
-            done = userxy.save()
-            print("%s-%s-%s"%(now, userxy.username, done))
+            print("SignupForm userx: %s-%s-%s"%(now, userxy.username, userxy.email))
+            #userxy.date_added = now
+            #userxy.date_modified = now
+            #done = userxy.save()
+            #print("%s-%s-%s"%(now, userxy.username, done))
+        else:
+            print("Signup userx: %s %s"%(form, now))
+        userxy.date_added = now
+        userxy.date_modified = now
+        done = userxy.save()
+        print("Signup02: %s-%s-%s"%(now, userxy.username, done))
     except Exception as e:
         print("backupX: %s %s"%(now, e))
     return userxy
@@ -272,8 +290,10 @@ def backupXY(userx, requestx, logtype='signup'):
         form = LoginForm(requestx)
         if form.is_valid():
             print("%s-%s-%s"%(now, userxyz.username, userxyz.email))
-            done = userxyz.save()
-            print("%s-%s-%s"%(now, userxyz.username, done))
+        else:
+            print("%s-%s-%s %s"%(now, userxyz.username, userxyz.email, form))
+        done = userxyz.save()
+        print("Signup03: %s-%s-%s"%(now, userxyz.username, done))
     except Exception as e:
         print("backupXY: %s %s"%(now, e))
 

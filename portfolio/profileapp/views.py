@@ -69,7 +69,8 @@ def profile(request):
             print("Profile exception: %s %s"%(now, e))
         return render(
             request, 'profile.html', context={'pname': pname, 'message': now,
-            'user': user, 'userx': userx, 'users': users, 'app': app, 'ip': ip, 'year': year},
+            'user': user, 'userx': userx, 'users': users,
+            'app': app, 'ip': ip, 'year': year},
         )
     except Exception as e:
         infox = "Profile: %s %s"%(now, 'Login...required...')
@@ -194,8 +195,17 @@ def edit(request):
             userp['pemail'] = request.session['pemail']
             userp['puname'] = request.session['puname']
             userp['paccn'] = request.session['paccn']
-            user = ProfileApp.objects.filter(email=userp['pemail'], profile_number=userp['paccn']).values()
+            #user = ProfileApp.objects.filter(email=userp['pemail'], profile_number=userp['paccn']).values()
             #userx = UserApp.objects.filter(email=userp['pemail'], profile_number=userp['paccn']).values()
+            userp['pid'] = request.session['pid']
+            user = ProfileApp.objects.filter(email=userp['pemail'], profile_number=userp['paccn'])
+            #userx = UserApp.objects.filter(email=userp['pemail'], profile_number=userp['paccn'])
+            users = user.values()
+            try:
+                user = user[0]
+                #userx = userx[0]
+            except Exception as e:
+                print("Edit Profile exception: %s %s"%(now, e))
             #accn = user[0].profile_number
             #uname = user[0].username
             #email = user[0].email
@@ -224,15 +234,24 @@ def edit(request):
             form = EditForm(qrb)
             if form.is_valid():
                 print("%s-%s-%s"%(now, user.username, user.email))
-                user.date_modified = now
-                done = user.save()
-                print("%s-%s-%s"%(now, user.username, done))
+                #user.date_modified = now
+                #done = user.save()
+                #print("%s-%s-%s"%(now, user.username, done))
                 #userx = backupX(user, qrb)
                 #backupXY(user, qrb)
                 done = "Edit done: %s-%s-%s"%(now, user.username, done)
+            else:
+                print("Editing: %s"%(now))
+            user.date_modified = now
+            done2 = user.save()
+            print("Editing: %s-%s-%s"%(now, user.username, done2))
+            #userx = backupX(user, qrb)
+            #backupXY(user, qrb)
+            done = "%s %s"%(done, done2)
             return render(
                 request, 'profile.html', context={'pname': pname, 'message': done,
-                'user': user, 'userx': userx, 'users': users,  'app': app, 'ip': ip, 'year': year},
+                'user': user, 'userx': userx, 'users': users,
+                'app': app, 'ip': ip, 'year': year},
             )
         except Exception as e:
             print("Edit: %s-%s"%(now, e))
@@ -255,6 +274,7 @@ def delete(request):
     app = {"map": '%s%s.jpg'%(pathTo, map[rand1]), "info": "%s %s"%(now, map[rand1])}
     userx = ProfileApp()
     userxy = UserApp()
+    users = userProfile()
     done = ("Delete: %s"%(now))
     if request.method == 'POST':
         qrb = request.POST
@@ -263,13 +283,28 @@ def delete(request):
             userp['pemail'] = request.session['pemail']
             userp['puname'] = request.session['puname']
             userp['paccn'] = request.session['paccn']
-            userx = ProfileApp.objects.filter(email=userp['pemail'], profile_number=userp['paccn']).values()
-            userxy = UserApp.objects.filter(email=userp['pemail'], profile_number=userp['paccn']).values()
-            userx.profile_number = userx.account()
-            userx.username = qrb['username'].strip()
-            userx.first_name = qrb['first_name'].strip()
-            userx.last_name = qrb['last_name'].strip()
-            userx.email = qrb['email'].strip()
+            #userx = ProfileApp.objects.filter(email=userp['pemail'], profile_number=userp['paccn']).values()
+            #userxy = UserApp.objects.filter(email=userp['pemail'], profile_number=userp['paccn']).values()
+            userp['pid'] = request.session['pid']
+            user = ProfileApp.objects.filter(email=userp['pemail'], profile_number=userp['paccn'])
+            #userx = UserApp.objects.filter(email=userp['pemail'], profile_number=userp['paccn'])
+            users = user.values()
+            username = userp['puname']
+            try:
+                user = user[0]
+                done2 = user.delete()
+                #userx = userx[0]
+                done = "%s %s"%(done, done2)
+                print("Deleted %s-%s-%s"%(now, username, done))
+                #userxy = backupX(user, qrb)
+                #backupXY(user, qrb)
+            except Exception as e:
+                print("Profile exception: %s %s"%(now, e))
+            #userx.profile_number = userp['paccn']
+            #userx.username = qrb['username'].strip()
+            #userx.first_name = qrb['first_name'].strip()
+            #userx.last_name = qrb['last_name'].strip()
+            #userx.email = qrb['email'].strip()
             #password = qrb['password'].strip()
             #salt = userx.regencode(userx.email, pname)
             #pkey = userx.reghash(salt, password, pname)
@@ -277,26 +312,34 @@ def delete(request):
             #userx.password = hashpassword
             #userx.usertype = qrb['usertype'].strip()
             #userx.usertypesa = qrb['usertypesa'].strip()
-            phone_number = qrb['phone_number'].strip()
-            userx.location = qrb['location'].strip()
-            userx.longitude = qrb['location'].strip()
-            userx.latitude = qrb['latitude'].strip()
-            userx.address = qrb['address'].strip()
-            userx.address_type = qrb['address_type'].strip()
-            userx.language = qrb['language'].strip()
+            #phone_number = qrb['phone_number'].strip()
+            #userx.location = qrb['location'].strip()
+            #userx.longitude = qrb['location'].strip()
+            #userx.latitude = qrb['latitude'].strip()
+            #userx.address = qrb['address'].strip()
+            #userx.address_type = qrb['address_type'].strip()
+            #userx.language = qrb['language'].strip()
             #userx.admin = qrb['admin'].strip()
             #userx.company = qrb['company'].strip()
-            userx.notes = qrb['notes'].strip()
+            #userx.notes = qrb['notes'].strip()
             form = EditForm(qrb)
             if form.is_valid():
-                print("%s-%s-%s"%(now, userx.username, userx.email))
-                userx.date_modified = now
+                print("%s-%s"%(now, username))
+                #userx.date_modified = now
                 #done = userx.save()
-                done = userx.delete()
-                print("%s-%s-%s"%(now, userx.username, done))
+                #done = userx.delete()
+                #print("%s-%s-%s"%(now, username, done))
                 #userxy = backupX(userx, qrb)
                 #backupXY(userx, qrb)
-                done = "Delete done: %s-%s-%s"%(now, userx.username, done)
+                #done = "Delete done: %s-%s-%s"%(now, username, done)
+            else:
+                print("Delete user: %s %s"%(now, username))
+            #userx.date_modified = now
+            #done = userx.save()
+            #done = user.delete()
+            print("Delete %s-%s-%s"%(now, username, done))
+            #userxy = backupX(user, qrb)
+            #backupXY(user, qrb)
         except Exception as e:
             print("Delete: %s-%s"%(now, e))
             done = '# System offline: %s'%(mytime2())
