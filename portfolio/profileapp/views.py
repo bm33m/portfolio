@@ -26,20 +26,22 @@ def index(request):
     app = {"map": '%s%s.jpg'%(pathTo, map[rand1]), "info": "%s %s"%(now, map[rand1])}
     users = map
     infox = "Welcome back: %s"%(now)
+    username = " "
     try:
         users = userProfile()
         userp = ProfileApp()
         userx = UserApp()
         adimn = {}
+        username = request.session['puname']
         #users = ProfileApp.objects.all()
         #users = ProfileApp.objects.all().values()
     except Exception as e:
         print("Index %s %s"%(now, e))
-        infox = ("Home: %s %s"%(now, 'system offline.'))
+        #infox = ("Home: %s %s"%(now, 'system offline.'))
         users = userProfile()
     return render(
         request, 'home.html', context={'pname': pname, 'message': infox,
-        'users': users, 'app': app, 'ip': ip, 'year': year},
+        'users': users, 'username': username, 'app': app, 'ip': ip, 'year': year},
     )
 
 def profile(request):
@@ -53,12 +55,14 @@ def profile(request):
     app = {"map": '%s%s.jpg'%(pathTo, map[rand1]), "info": "%s %s"%(now, map[rand1])}
     infox = now
     users = ProfileApp()
+    username = " "
     try:
         userp = {}
         userp['pemail'] = request.session['pemail']
         userp['puname'] = request.session['puname']
         userp['paccn'] = request.session['paccn']
         userp['pid'] = request.session['pid']
+        username = userp['puname']
         user = ProfileApp.objects.filter(email=userp['pemail'], profile_number=userp['paccn'])
         userx = UserApp.objects.filter(email=userp['pemail'], profile_number=userp['paccn'])
         users = user.values()
@@ -69,7 +73,7 @@ def profile(request):
             print("Profile exception: %s %s"%(now, e))
         return render(
             request, 'profile.html', context={'pname': pname, 'message': now,
-            'user': user, 'userx': userx, 'users': users,
+            'user': user, 'userx': userx, 'users': users, 'username': username,
             'app': app, 'ip': ip, 'year': year},
         )
     except Exception as e:
@@ -128,14 +132,21 @@ def profiles(request):
     rand1 = random.randint(0, len(map) - 1)
     app = {"map": '%s%s.jpg'%(pathTo, map[rand1]), "info": "%s %s"%(now, map[rand1])}
     infox = now
+    username = " "
     try:
         userp = {}
         userp['email'] = request.session['pemail']
         userp['puname'] = request.session['puname']
         userp['paccn'] = request.session['paccn']
+        username = userp['puname']
+        try:
+            profiles = ProfileApp.objects.all().values()
+        except Exception as e:
+            print("Profiles: %s"%(e))
         return render(
             request, 'profiles.html', context={'pname': pname, 'message': now,
-            'userp': userp, 'cards': map, 'app': app, 'ip': ip, 'year': year},
+            'userp': userp, 'cards': map, 'app': app, 'username': username,
+            'profiles': profiles, 'ip': ip, 'year': year},
         )
     except Exception as e:
         infox = "Profiles: %s %s"%(now, 'Login...required...')
